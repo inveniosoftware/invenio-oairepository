@@ -4,6 +4,7 @@
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2021-2022 Graz University of Technology.
 # Copyright (C) 2022 RERO.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,7 @@
 """OAI-PMH verbs."""
 
 from flask import current_app, request
+from invenio_i18n import lazy_gettext as _
 from invenio_rest.serializer import BaseSchema
 from marshmallow import ValidationError, fields, validates_schema
 from marshmallow.fields import DateTime as _DateTime
@@ -28,7 +30,7 @@ def validate_metadata_prefix(value, **kwargs):
     metadataFormats = current_app.config["OAISERVER_METADATA_FORMATS"]
     if value not in metadataFormats:
         raise ValidationError(
-            "metadataPrefix does not exist", field_names=["metadataPrefix"]
+            _("metadataPrefix does not exist"), field_names=["metadataPrefix"]
         )
 
 
@@ -88,12 +90,13 @@ class OAISchema(BaseSchema):
         if "verb" in data and data["verb"] != self.__class__.__name__:
             raise ValidationError(
                 # FIXME encode data
-                "This is not a valid OAI-PMH verb:{0}".format(data["verb"]),
+                _("This is not a valid OAI-PMH verb:{0}").format(data["verb"]),
                 field_names=["verb"],
             )
 
         if "from_" in data and "until" in data and data["from_"] > data["until"]:
-            raise ValidationError('Date "from" must be before "until".')
+
+            raise ValidationError(_('Date "from" must be before "until".'))
 
 
 class Verbs(object):
@@ -162,7 +165,7 @@ def check_extra_params_in_request(verb):
         ]
     )
     if extra:
-        raise ValidationError({"_schema": ["You have passed too many arguments."]})
+        raise ValidationError({"_schema": [_("You have passed too many arguments.")]})
 
 
 def make_request_validator(request):
