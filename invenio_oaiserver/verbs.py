@@ -12,7 +12,7 @@
 """OAI-PMH verbs."""
 
 from flask import current_app, request
-from invenio_i18n import lazy_gettext as _
+from invenio_i18n import gettext as _
 from invenio_rest.serializer import BaseSchema
 from marshmallow import ValidationError, fields, validates_schema
 from marshmallow.fields import DateTime as _DateTime
