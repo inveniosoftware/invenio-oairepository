@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2017-2024 CERN.
 # Copyright (C) 2022 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@
 import json
 
 from flask import current_app
+from invenio_i18n import lazy_gettext as _
 from invenio_indexer.api import RecordIndexer
 from invenio_search import current_search, current_search_client
 from invenio_search.engine import search
@@ -128,7 +130,9 @@ def create_percolate_query(
         )
     else:
         raise Exception(
-            "Either documents or (document_search_ids and document_search_indices) must be specified."
+            _(
+                "Either documents or (document_search_ids and document_search_indices) must be specified."
+            )
         )
 
     if percolator_ids:
