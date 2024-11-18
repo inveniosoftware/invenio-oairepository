@@ -92,7 +92,7 @@ class OAISchema(BaseSchema):
                 field_names=["verb"],
             )
 
-        if "from_" in data and "until" in data and data["from_"] > data["until"]:
+        if "from" in data and "until" in data and data["from"] > data["until"]:
             raise ValidationError('Date "from" must be before "until".')
 
 
@@ -119,8 +119,9 @@ class Verbs(object):
 
         from_ = DateTime(
             format="permissive",
-            metadata={"load_from": "from", "data_key": "from", "dump_to": "from"},
+            metadata={"data_key": "from"},
             data_key="from",
+            attribute="from",
         )
         until = DateTime(format="permissive")
         set = fields.Str()
