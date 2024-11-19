@@ -865,6 +865,12 @@ def test_listrecords(app):
                     == 10
                 )
 
+                from_ = tree.xpath("/x:OAI-PMH/x:request/@from", namespaces=NAMESPACES)
+                assert len(from_) == 1
+
+                until = tree.xpath("/x:OAI-PMH/x:request/@until", namespaces=NAMESPACES)
+                assert len(until) == 1
+
                 # Check from:until range in resumption token
                 resumption_token = tree.xpath(
                     "/x:OAI-PMH/x:ListRecords/x:resumptionToken", namespaces=NAMESPACES
@@ -964,11 +970,35 @@ def test_listidentifiers(app):
                 assert result.status_code == 200
 
                 tree = etree.fromstring(result.data)
+
+                from_ = tree.xpath("/x:OAI-PMH/x:request/@from", namespaces=NAMESPACES)
+                assert len(from_) == 1
+
+                until = tree.xpath("/x:OAI-PMH/x:request/@until", namespaces=NAMESPACES)
+                assert len(until) == 1
+
                 identifier = tree.xpath(
                     "/x:OAI-PMH/x:ListIdentifiers/x:header/x:identifier",
                     namespaces=NAMESPACES,
                 )
                 assert len(identifier) == 1
+
+        # Check from:until range with invalid values
+        with app.test_client() as c:
+            # Check date and datetime timestamps. from should be before until
+            for granularity in (False, True):
+                result = c.get(
+                    "/oai2d?verb=ListIdentifiers&metadataPrefix=oai_dc"
+                    "&from={0}&until={1}".format(
+                        datetime_to_datestamp(
+                            record.updated + timedelta(2), day_granularity=granularity
+                        ),
+                        datetime_to_datestamp(
+                            record.updated - timedelta(2), day_granularity=granularity
+                        ),
+                    )
+                )
+                assert result.status_code == 422
 
         # check set param
         with app.test_client() as c:
@@ -1010,6 +1040,13 @@ def test_listidentifiers(app):
                 assert result.status_code == 200
 
                 tree = etree.fromstring(result.data)
+
+                from_ = tree.xpath("/x:OAI-PMH/x:request/@from", namespaces=NAMESPACES)
+                assert len(from_) == 1
+
+                until = tree.xpath("/x:OAI-PMH/x:request/@until", namespaces=NAMESPACES)
+                assert len(until) == 1
+
                 identifier = tree.xpath(
                     "/x:OAI-PMH/x:ListIdentifiers/x:header/x:identifier",
                     namespaces=NAMESPACES,
