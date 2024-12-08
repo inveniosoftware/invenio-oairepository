@@ -71,7 +71,7 @@ def envelope(**kwargs):
     e_responseDate.text = datetime_to_datestamp(datetime.utcnow())
     e_request = SubElement(e_oaipmh, etree.QName(NS_OAIPMH, "request"))
     for key, value in kwargs.items():
-        if key == "from_" or key == "until":
+        if key == "from" or key == "until":
             value = datetime_to_datestamp(value)
         elif key == "resumptionToken":
             value = value["token"]
